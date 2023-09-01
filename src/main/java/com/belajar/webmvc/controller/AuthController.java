@@ -1,7 +1,9 @@
 package com.belajar.webmvc.controller;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,13 +14,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.belajar.webmvc.model.User;
+
 @Controller
 public class AuthController {
 
     @PostMapping(path = "/auth/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> login(@RequestParam(name = "username") String username,
-            @RequestParam(name = "password") String password, HttpServletResponse servletResponse) {
+            @RequestParam(name = "password") String password,HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         if ("Dedi".equals(username) && "rahasia".equals(password)) {
+            HttpSession session = servletRequest.getSession(true);
+            session.setAttribute("user", new User(username));
+            
             Cookie cookie = new Cookie("username", username);
             cookie.setPath("/");
             servletResponse.addCookie(cookie);
